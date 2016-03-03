@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tabs_page);
 
+        // Show status bar
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         dbManager = DBManager.getInstance(this);
 
 
