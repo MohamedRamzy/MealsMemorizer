@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.mohamedramzy.mealsmemorizer.R;
 import com.mohamedramzy.mealsmemorizer.adapter.MealsListAdapter;
 import com.mohamedramzy.mealsmemorizer.model.Meal;
+import com.mohamedramzy.mealsmemorizer.utility.PopupDialog;
 import com.mohamedramzy.mealsmemorizer.utility.Utility;
 
 import java.util.List;
@@ -73,8 +74,6 @@ public class MealsFragment extends Fragment {
             noMealsLayout.setVisibility(View.VISIBLE);
             mMealsListView.setVisibility(View.GONE);
         }
-
-
         return rootView;
     }
 
@@ -86,14 +85,10 @@ public class MealsFragment extends Fragment {
             return;
         }
         int index = Utility.getRandomIndex(mMealsListAdapter.getCount());
-        String meal = mMealsListAdapter.getItem(index).getName();
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Random Meal")
-                .setMessage(meal + " :)")
-                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                }).show();
+        Meal meal = mMealsListAdapter.getItem(index);
+
+        PopupDialog popupDialog = new PopupDialog(getActivity());
+        popupDialog.showPopupMeal(meal);
     }
 
     public void showAlert(){

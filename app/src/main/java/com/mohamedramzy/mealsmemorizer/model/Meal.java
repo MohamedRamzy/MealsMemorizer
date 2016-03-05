@@ -14,6 +14,7 @@ public class Meal implements Parcelable {
     private int id;
     private String name;
     int fav;
+    int categoryID;
 
     public Meal(){
 
@@ -48,6 +49,14 @@ public class Meal implements Parcelable {
         this.fav = fav;
     }
 
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -60,6 +69,7 @@ public class Meal implements Parcelable {
             meal.setId(source.readInt());
             meal.setName(source.readString());
             meal.setFav(source.readInt());
+            meal.setCategoryID(source.readInt());
             return meal;
         }
 
@@ -75,5 +85,6 @@ public class Meal implements Parcelable {
         dest.writeInt(getId());
         dest.writeString(getName());
         dest.writeInt(getFav());
+        dest.writeInt(getCategoryID());
     }
 }

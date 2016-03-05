@@ -4,16 +4,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.mohamedramzy.mealsmemorizer.R;
 import com.mohamedramzy.mealsmemorizer.database.DBManager;
@@ -24,16 +18,22 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MealsFragment.CallBack {
 
-    private List<Meal> mMeals;
-    private List<Meal> mFavMeals;
+
 
     private static final String MEALS_TAG = "All Meals";
     private static final String FAV_TAG = " Favourites";
+
+    private List<Meal> mMeals;
+    private List<Meal> mFavMeals;
+
+    ActionBar.Tab mealsTab;
+    ActionBar.Tab favouitesTab;
 
     private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tabs_page);
 
@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
         //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         dbManager = DBManager.getInstance(this);
-
 
         final ActionBar actionBar = getSupportActionBar();
 
@@ -54,8 +53,12 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
                 //Log.v("onTabSelected : ",tab.getText().toString());
                 if(tab.getTag().equals(MEALS_TAG)){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.tab_content,new MealsFragment()).commit();
+                    mealsTab.setIcon(R.drawable.meals_bar_icon_clicked);
+                    favouitesTab.setIcon(R.drawable.fav_bar_icon);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.tab_content, new MealsFragment()).commit();
                 }else if(tab.getTag().equals(FAV_TAG)){
+                    mealsTab.setIcon(R.drawable.meals_bar_icon);
+                    favouitesTab.setIcon(R.drawable.fav_bar_icon_clicked);
                     getSupportFragmentManager().beginTransaction().replace(R.id.tab_content,new FavoritesFragment()).commit();
                 }
             }
@@ -77,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
             actionBar.addTab(actionBar.newTab().setText("Tab " + (i + 1)).setIcon(R.drawable.meal).setTabListener(tabListener));
             actionBar.addTab(actionBar.newTab().setText("Tab " + (i + 1)).setTabListener(tabListener));
         }*/
-        ActionBar.Tab mealsTab = actionBar.newTab().setTag(MEALS_TAG).setText(MEALS_TAG).setIcon(R.drawable.icon_meal).setTabListener(tabListener);
-        ActionBar.Tab favouitesTab = actionBar.newTab().setTag(FAV_TAG).setText(FAV_TAG).setIcon(R.drawable.icon_star).setTabListener(tabListener);
+        mealsTab = actionBar.newTab().setTag(MEALS_TAG).setText(MEALS_TAG).setIcon(R.drawable.meals_bar_icon).setTabListener(tabListener);
+        favouitesTab = actionBar.newTab().setTag(FAV_TAG).setText(FAV_TAG).setIcon(R.drawable.fav_bar_icon).setTabListener(tabListener);
 
         actionBar.addTab(mealsTab);
         actionBar.addTab(favouitesTab);
@@ -88,10 +91,15 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
     protected void onStart() {
         super.onStart();
         Log.v("MainActivity", "onStart");
-        loadMeals();
+        loadData();
     }
 
-    public void loadMeals(){
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void loadData(){
         mMeals = getMeals();
         mFavMeals = getFavMeals();
     }
@@ -100,26 +108,15 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
         Cursor cursor = dbManager.queryAll();
         mMeals = new ArrayList<>();
         if (cursor.getCount() > 0) {
-            int i = 0;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 Meal meal = new Meal();
                 meal.setId(cursor.getInt(cursor.getColumnIndex(DBManager._ID)));
                 meal.setName(cursor.getString(cursor.getColumnIndex(DBManager.COLUMN_MEAL_NAME)));
                 meal.setFav(cursor.getInt(cursor.getColumnIndex(DBManager.COLUMN_MEAL_FAV)));
+                meal.setCategoryID(cursor.getInt(cursor.getColumnIndex(DBManager.COLUMN_MEAL_CAT)));  // check this when added to db
                 mMeals.add(meal);
             }
         }
-
-        /*if(mMeals == null) {
-            mMeals = new ArrayList<>();
-            for(int i = 1; i < 31 ;i+=3){
-
-                mMeals.add(new Meal(i+"","Meal .................................. #"+i,i%2));
-
-                if(mMeals.get(mMeals.size()-1).getFav() == 1)
-                    getFavMeals().add(mMeals.get(mMeals.size()-1));
-            }
-        }*/
         return mMeals;
     }
 
@@ -128,43 +125,33 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
         Cursor cursor = dbManager.queryAllFavourites();
         mFavMeals = new ArrayList<>();
         if (cursor.getCount() > 0) {
-            int i = 0;
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 Meal meal = new Meal();
                 meal.setId(cursor.getInt(cursor.getColumnIndex(DBManager._ID)));
                 meal.setName(cursor.getString(cursor.getColumnIndex(DBManager.COLUMN_MEAL_NAME)));
                 meal.setFav(cursor.getInt(cursor.getColumnIndex(DBManager.COLUMN_MEAL_FAV)));
+                meal.setCategoryID(cursor.getInt(cursor.getColumnIndex(DBManager.COLUMN_MEAL_CAT)));  // check this when added to db
                 mFavMeals.add(meal);
             }
         }
-
-/*
-        if(mFavMeals == null)
-            mFavMeals = new ArrayList<>();*/
         return mFavMeals;
     }
 
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
     public void openAddMealActivity() {
-//        getSupportFragmentManager().beginTransaction().replace(R.id.tab_content,new AddMealFragment()).commit();
+
         Intent intent = new Intent(this,MealDetailActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void addMeal(Meal m) {
-//        getMeals().add(m);
         dbManager.insert(m);
     }
 
     public void addFavMeal(Meal m){
-        getFavMeals().add(m);
+        mFavMeals.add(m);
     }
 
     @Override
@@ -177,55 +164,5 @@ public class MainActivity extends AppCompatActivity implements MealsFragment.Cal
         Intent intent = new Intent(this,MealDetailActivity.class);
         intent.putExtra("meal", (Parcelable)meal);
         startActivity(intent);
-    }
-
-
-    /**
-     * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns a fragment
-     * representing an object in the collection.
-     */
-    public static class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
-
-        public DemoCollectionPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            Fragment fragment = new DemoObjectFragment();
-            Bundle args = new Bundle();
-            args.putInt(DemoObjectFragment.ARG_OBJECT, i + 1); // Our object is just an integer :-P
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            // For this contrived example, we have a 100-object collection.
-            return 5;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
-        }
-    }
-
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class DemoObjectFragment extends Fragment {
-
-        public static final String ARG_OBJECT = "object";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fav_fragment, container, false);
-           /* Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    Integer.toString(args.getInt(ARG_OBJECT)));*/
-            return rootView;
-        }
     }
 }

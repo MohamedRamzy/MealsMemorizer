@@ -57,6 +57,7 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(COLUMN_MEAL_NAME,meal.getName());
         values.put(COLUMN_MEAL_FAV,meal.getFav());
+        values.put(COLUMN_MEAL_CAT,meal.getCategoryID());
 
         long rowID = getWritableDB().insert(MEALS_TABLE_NAME, null, values);
 
@@ -80,11 +81,20 @@ public class DBManager {
         values.put(_ID,meal.getId());
         values.put(COLUMN_MEAL_NAME,meal.getName());
         values.put(COLUMN_MEAL_FAV,meal.getFav());
+        values.put(COLUMN_MEAL_CAT,meal.getCategoryID());
 
 
         long updated = getWritableDB().update(DBManager.MEALS_TABLE_NAME, values, DBManager._ID + "=?", new String[]{meal.getId() + ""});
 
         if(updated > 0)
+            return true;
+        return false;
+    }
+
+    public boolean delete(Meal meal) {
+        long deleted = getWritableDB().delete(DBManager.MEALS_TABLE_NAME, DBManager._ID + "=?", new String[]{meal.getId() + ""});
+
+        if(deleted > 0)
             return true;
         return false;
     }
@@ -100,6 +110,8 @@ public class DBManager {
         values.put(_ID,meal.getId());
         values.put(COLUMN_MEAL_NAME,meal.getName());
         values.put(COLUMN_MEAL_FAV,0);
+        values.put(COLUMN_MEAL_CAT,meal.getCategoryID());
+
         long updated = getWritableDB().update(DBManager.MEALS_TABLE_NAME, values, DBManager._ID+"=?", new String[]{meal.getId()+""});
 
         if(updated > 0)
@@ -108,11 +120,12 @@ public class DBManager {
     }
 
     public static final String DB_NAME = "meals.db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
 
     public static final String _ID = "meal_id";
     public static final String COLUMN_MEAL_NAME = "name";
     public static final String COLUMN_MEAL_FAV = "favourite";
+    public static final String COLUMN_MEAL_CAT= "category";
 
 
     static final String MEALS_TABLE_NAME = "meals";
@@ -120,6 +133,7 @@ public class DBManager {
             " CREATE TABLE " + MEALS_TABLE_NAME + "(" +
                     _ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_MEAL_NAME + " TEXT NOT NULL, " +
+                    COLUMN_MEAL_CAT + " INTEGER NOT NULL, " +
                     COLUMN_MEAL_FAV + " INTEGER);";
 
     public class DBHelper extends SQLiteOpenHelper {

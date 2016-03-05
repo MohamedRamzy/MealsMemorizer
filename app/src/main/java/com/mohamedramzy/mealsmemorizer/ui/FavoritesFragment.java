@@ -1,10 +1,8 @@
 package com.mohamedramzy.mealsmemorizer.ui;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +15,7 @@ import android.widget.Toast;
 import com.mohamedramzy.mealsmemorizer.R;
 import com.mohamedramzy.mealsmemorizer.adapter.MealsListAdapter;
 import com.mohamedramzy.mealsmemorizer.model.Meal;
+import com.mohamedramzy.mealsmemorizer.utility.PopupDialog;
 import com.mohamedramzy.mealsmemorizer.utility.Utility;
 
 import java.util.List;
@@ -79,14 +78,11 @@ public class FavoritesFragment extends Fragment {
         }
 
         int index = Utility.getRandomIndex(mFavMealsListAdapter.getCount());
-        String meal = mFavMealsListAdapter.getItem(index).getName();
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Random Favourite Meal")
-                .setMessage(meal + " :)")
-                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                }).show();
+        Meal meal = mFavMealsListAdapter.getItem(index);
+
+        PopupDialog popupDialog = new PopupDialog(getActivity());
+        popupDialog.showPopupMeal(meal);
+
     }
 
 
