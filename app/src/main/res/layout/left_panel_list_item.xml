@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="horizontal"
+    android:gravity="center|start">
+
+    <ImageView
+        android:id="@+id/left_panel_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/meals_bar_icon_clicked"
+        android:layout_margin="20dp" />
+
+    <TextView
+        android:id="@+id/left_panel_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="All Meals"
+        android:gravity="center_vertical"
+        android:textColor="#ffffff" />
+</LinearLayout>

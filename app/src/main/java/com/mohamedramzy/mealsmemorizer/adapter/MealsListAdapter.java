@@ -21,8 +21,6 @@ public class MealsListAdapter extends ArrayAdapter<Meal> {
         this.mContext = context;
     }
 
-
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

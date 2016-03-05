@@ -61,7 +61,7 @@ public class MealsFragment extends Fragment {
         addMeal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((CallBack)getActivity()).openAddMealActivity();
+                ((CallBack)getActivity()).navigateToAddMeal();
 //                showAlert();
             }
         });
@@ -135,7 +135,10 @@ public class MealsFragment extends Fragment {
 
     }
     public interface CallBack{
-        public void openAddMealActivity();
+        public void navigateToAllMeals();
+        public void navigateToFavourites();
+        public void navigateToAddMeal();
+
         public void addMeal(Meal m);
         public void addFavMeal(Meal m);
         public void showMeals();
